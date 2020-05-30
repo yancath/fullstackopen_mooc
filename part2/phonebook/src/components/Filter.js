@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Filter = ( {filter, handleFilterChange, showFilter} ) => {
+const Filter = ( {filter, handleFilterChange} ) => {
     const text = 'filter shown with'
 
     return (
