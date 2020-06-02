@@ -32,10 +32,13 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
     }
 
-    console.log(personObj)
-    setPersons(persons.concat(personObj));
-    setNewName('');
-    setNewNumber('');
+    axios
+    .post('http://localhost:3001/persons', personObj)
+    .then(response => {
+      setPersons(persons.concat(personObj));
+      setNewName('');
+      setNewNumber('');
+    })
   }
 
   const showFilter = filter === ''

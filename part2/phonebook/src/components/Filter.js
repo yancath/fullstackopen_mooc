@@ -2,7 +2,6 @@ import React from 'react';
 
 const Filter = ( {filter, handleFilterChange} ) => {
     const text = 'filter shown with'
-    console.log("filter",filter)
 
     return (
         <div>
