@@ -21,14 +21,9 @@
       "id": 4
     },
     {
-      "name": "cat",
-      "number": "909",
+      "name": "ambulance",
+      "number": "411",
       "id": 5
-    },
-    {
-      "name": "wambulance",
-      "number": "911",
-      "id": 6
     }
   ]
 }
