@@ -5,6 +5,7 @@ import Person from './components/Person'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 import personsService from './services/Persons'
 
@@ -13,6 +14,8 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [ notif, setNotif ]  = useState(null)
+  const [ flag, setFlag ] = useState(null)
 
   useEffect(() => {
     axios.get('http://localhost:3001/persons').then(response => {
@@ -39,14 +42,38 @@ const App = () => {
 					number: newNumber,
         }
 
+        setNotif(`${newName} has been updated`)
+        setFlag(true)
+        setTimeout(() => {
+          setNotif(null)
+        }, 5000)
+
         personsService
         .update(id, newObj)
         .then(returnedPerson => {
           setPersons(persons.map(person => person.id === id ? returnedPerson : person))
+          setNewName('');
+          setNewNumber('');
+        })
+        .catch(error => {
+          setNotif(`Information of ${newName} has already been removed from server`)
+          setFlag(false)
+          setTimeout(() => {
+            setNotif(null)
+          }, 5000)
+          
+          setPersons(persons.filter(person => person.id !== id)
+          )
         })
 
       }
     } else {
+      setNotif(`Added ${newName}`)
+      setFlag(true)
+      setTimeout(() => {
+        setNotif(null)
+      }, 5000)
+      
       personsService
       .create(personObj)
       .then(returnedPerson => {
@@ -80,6 +107,9 @@ const App = () => {
     const person = persons.find(person => person.id === id)
     
     if (window.confirm(`Delete ${person.name}?`) === true) {
+      setNotif(`Deleted ${person.name}`)
+      setFlag(true)
+
       personsService
       .remove(id)
       .then(response => {
@@ -95,6 +125,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notif} flag={flag}/>
       <Filter filter={filter} handleFilterChange={handleFilterChange} showFilter={showFilter}/>
       <h3>add a new</h3>
       <PersonForm 
@@ -102,11 +133,9 @@ const App = () => {
       newName={newName} 
       newNumber={newNumber} 
       handlePersonChange={handlePersonChange} 
-      handleNumChange={handleNumChange}/>
+      handleNumChange={handleNumChange} />
       <h3>Numbers</h3>
-        <Persons 
-        persons={displayNames()}
-        />
+      <Persons persons={displayNames()} />
     </div>
 
   )
