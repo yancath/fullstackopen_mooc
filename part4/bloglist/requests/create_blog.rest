@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+  "title": "Blogilates",
+  "author": "Cassie Ho",
+  "url": "https://www.blogilates.com/",
+  "likes": 1000000
+}

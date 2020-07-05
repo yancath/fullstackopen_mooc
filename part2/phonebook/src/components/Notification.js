@@ -5,7 +5,7 @@ const Notification = ( {message, flag} ) => {
         return null;
     }
     
-    if (flag == false) {
+    if (flag === false) {
         return (
             <div className="error">
                 {message}

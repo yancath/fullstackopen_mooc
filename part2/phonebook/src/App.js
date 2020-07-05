@@ -18,7 +18,7 @@ const App = () => {
   const [ flag, setFlag ] = useState(null)
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => {
+    axios.get('http://localhost:3001/api/persons').then(response => {
       setPersons(response.data);
     })
   }, [])
@@ -80,6 +80,13 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('');
         setNewNumber('');
+      })
+      .catch(error => {
+        setNotif(`Person validation failed: name: ${newName} is shorter than the minimum allowed (3).`)
+        setFlag(false)
+        setTimeout(() => {
+          setNotif(null)
+        }, 5000)
       })
     }
 
