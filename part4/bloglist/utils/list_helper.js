@@ -1,3 +1,5 @@
+const blog = require("../models/blog");
+
 const dummy = (blogs) => {
     if (blogs) {
         return 1;
@@ -25,7 +27,11 @@ const favoriteBlog = (blogs) => {
     }
   }
 
-  return max;
+  for (j = 0; j < blogs.length; j++) {
+    if (blogs[j].likes === max) {
+      return blogs[j];
+    }
+  }
 }
   
   module.exports = {
