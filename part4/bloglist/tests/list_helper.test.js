@@ -102,8 +102,75 @@ describe('total likes', () => {
 
     test('when list has multiple blogs', () => {
       const result = listHelper.favoriteBlog(blogs)
-      console.log(result)
       expect(result).toEqual(oneFav)
+    })
+  })
+
+  describe('most blogs', () => {
+    const multipleBlogs = [  { 
+      _id: "5a422bc61b54a676234d17fc", 
+      title: "Type wars",
+      author: "Robert C. Martin", 
+      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html", 
+      likes: 2, 
+      __v: 0 
+    },
+    { 
+      _id: "5a422bc61b54a676234d17fd", 
+      title: "Type wars II",
+      author: "Robert C. Martin", 
+      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html", 
+      likes: 2, 
+      __v: 0 
+    }]
+    
+    const expected = {
+      author: "Robert C. Martin",
+      blogs: 2
+    }
+    
+    test('when list has no blog', () => {
+      const result = listHelper.mostBlogs(noBlog)
+      expect(result).toBe(0)
+    })
+
+    test('when list has multiple blogs', () => {
+      const result = listHelper.mostBlogs(multipleBlogs)
+      expect(result).toEqual(expected)
+    })
+
+  })
+
+  describe('author with the most likes', () => {
+    const multipleBlogs = [  { 
+      _id: "5a422bc61b54a676234d17fc", 
+      title: "Type wars",
+      author: "Robert C. Martin", 
+      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html", 
+      likes: 2, 
+      __v: 0 
+    },
+    { 
+      _id: "5a422bc61b54a676234d17fd", 
+      title: "Type wars II",
+      author: "Robert B. Martin", 
+      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html", 
+      likes: 0, 
+      __v: 0 
+    }]
+    
+    const expected = {
+      author: "Robert C. Martin",
+      likes: 2
+    }
+    test('when list has no blog', () => {
+      const result = listHelper.mostLikes(noBlog)
+      expect(result).toBe(0)
+    })
+
+    test('when list has multiple blogs', () => {
+      const result = listHelper.mostLikes(multipleBlogs)
+      expect(result).toEqual(expected)
     })
   })
 })
