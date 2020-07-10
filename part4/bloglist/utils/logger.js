@@ -1,5 +1,7 @@
 const info = (...params) => {
-console.log(...params)
+  if (process.env.NODE_ENV !== 'test') {  //it does not print to console in test mode:
+    console.log(...params)
+  }  
 }
 
 const error = (...params) => {
