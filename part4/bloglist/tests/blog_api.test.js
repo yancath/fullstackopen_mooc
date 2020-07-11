@@ -43,6 +43,27 @@ test('unique identifier is called id', async () => {
     expect(response.body[1].id).toBeDefined()
 })
 
+test('a valid blog can be added', async () => {
+    const newBlog = {
+        title: 'Liz Lisa Blog',
+        author: 'Tokyo Kawaii Life',
+        url: 'https://lizlisa.com/blog',
+        likes: 100000
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(initialBlogs.length + 1)
+
+    const titles = response.body.map(blog => blog.title)
+    expect(titles).toContain(newBlog.title)
+})
+
 afterAll(() => {
     mongoose.connection.close();
   });
