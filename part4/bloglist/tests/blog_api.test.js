@@ -22,7 +22,6 @@ const initialBlogs = [
     }
 ]
 
-
 beforeEach(async () => {
     await Blog.deleteMany({})
   
@@ -36,6 +35,12 @@ beforeEach(async () => {
 test('correct amount of blog posts returned', async () => {
     const response  = await api.get('/api/blogs')
     expect(response.body).toHaveLength(initialBlogs.length)
+})
+
+test('unique identifier is called id', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body[0].id).toBeDefined()
+    expect(response.body[1].id).toBeDefined()
 })
 
 afterAll(() => {
