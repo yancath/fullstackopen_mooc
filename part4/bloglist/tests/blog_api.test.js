@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const App = require('../App')
 const Blog = require('../models/blog')
+const { response } = require('express')
 
 const api = supertest(App)
 
@@ -82,6 +83,22 @@ test('a blog without likes is defaulted to zero', async () => {
     //looks at response returned
     //const response = await api.get('/api/blogs')
     //expect(response.body[2].likes).toBe(0)
+})
+
+test('blog without title and url cannot be added', async () => {
+    const invalid = {
+        author: 'Xiaxue',
+        likes: 2000000
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(invalid)
+    .expect(400)
+
+    const response  = await api.get('/api/blogs')
+    const blogsIntially = response.body.map(blog => blog.title)
+    expect(blogsIntially).toHaveLength(initialBlogs.length)
 })
 
 afterAll(() => {
