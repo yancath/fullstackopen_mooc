@@ -5,6 +5,7 @@ const App = require('../App')
 const api = supertest(App)
 const Blog = require('../models/blog')
 
+//npm test -- tests/blog_api.test.js
 
 const initialBlogs = [
     {
@@ -110,7 +111,7 @@ test('blog without title and url cannot be added', async () => {
 
 
 describe('deletion of blog posts', () => {
-    test('deleting succeeds with 204 if id is valid', async () => {
+    test('deleting blog succeeds', async () => {
         const startingBlogs = await helper.blogsInDB()
         const blogToDelete = startingBlogs[0]
       
@@ -129,6 +130,28 @@ describe('deletion of blog posts', () => {
       })
 })
 
-afterAll(() => {
+describe('blog can be updated', () => {
+    test('updating blog is successful', async () => {
+        const blogUpdate = {
+            title: 'Blogilates',
+            author: 'Cassie Ho',
+            url: 'https://www.blogilates.com/',
+            likes: 1000001,
+        }
+        
+        const targetBlog = helper.initialBlogs[0]
+
+        await api
+        .put( `/api/blogs/${targetBlog.id}`)
+        .send(blogUpdate)
+        .expect(200)
+
+        const afterUpdate = await helper.blogsInDB()
+        expect(afterUpdate.length).toBe(helper.initialBlogs.length)
+
+    })
+})
+
+afterAll( () => {
     mongoose.connection.close();
   });

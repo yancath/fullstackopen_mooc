@@ -1,6 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const { request } = require('express')
+const { request, response } = require('express')
 
 blogsRouter.get('/', (request, response) => {
     Blog
@@ -38,6 +38,23 @@ blogsRouter.post('/', (request, response) => {
     } catch (error) {
       next(error)
     }
+  })
+
+  blogsRouter.put('/:id', async (request, response, next) => {
+    const body = request.body
+
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes || 0
+    }
+
+    Blog.findByIdAndUpdate(request.params.id, blog, { new: true})
+      .then(updatedBlog => {
+        response.json(updatedBlog)
+      })
+      .catch(error => next(error))
   })
 
   module.exports = blogsRouter
