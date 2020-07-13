@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
 const supertest = require('supertest')
+const mongoose = require('mongoose')
+const helper = require('./test_helper')
 const App = require('../App')
-const Blog = require('../models/blog')
-const { response } = require('express')
-
 const api = supertest(App)
+const Blog = require('../models/blog')
+
 
 const initialBlogs = [
     {
@@ -26,24 +26,27 @@ const initialBlogs = [
 beforeEach(async () => {
     await Blog.deleteMany({})
   
-    let blogObject = new Blog(initialBlogs[0])
+    let blogObject = new Blog(helper.initialBlogs[0])
     await blogObject.save()
   
-    blogObject = new Blog(initialBlogs[1])
+    blogObject = new Blog(helper.initialBlogs[1])
     await blogObject.save()
   })
-
+describe('testing the GET requests for blogs', () => {
 test('correct amount of blog posts returned', async () => {
     const response  = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(initialBlogs.length)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
 })
 
 test('unique identifier is called id', async () => {
     const response = await api.get('/api/blogs')
     expect(response.body[0].id).toBeDefined()
     expect(response.body[1].id).toBeDefined()
+    })
 })
 
+
+describe('addition of new blogs', () => {
 test('a valid blog can be added', async () => {
     const newBlog = {
         title: 'Liz Lisa Blog',
@@ -58,14 +61,17 @@ test('a valid blog can be added', async () => {
         .expect(201)
         .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(initialBlogs.length + 1)
+    //const response = await api.get('/api/blogs')
+    //expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
 
-    const titles = response.body.map(blog => blog.title)
+    const blogsAtEnd = await helper.blogsInDB()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+    const titles = blogsAtEnd.map(blog => blog.title)
     expect(titles).toContain(newBlog.title)
 })
 
-test('a blog without likes is defaulted to zero', async () => {
+test('adding a blog without likes is defaulted to zero', async () => {
     const noLikes = {
         title: 'EkiBlog',
         author: 'Ekimura',
@@ -96,9 +102,31 @@ test('blog without title and url cannot be added', async () => {
     .send(invalid)
     .expect(400)
 
-    const response  = await api.get('/api/blogs')
-    const blogsIntially = response.body.map(blog => blog.title)
+    const blogsAtEnd = await helper.blogsInDB()
+    const blogsIntially = blogsAtEnd.map(blog => blog.title)
     expect(blogsIntially).toHaveLength(initialBlogs.length)
+    })
+})
+
+
+describe('deletion of blog posts', () => {
+    test('deleting succeeds with 204 if id is valid', async () => {
+        const startingBlogs = await helper.blogsInDB()
+        const blogToDelete = startingBlogs[0]
+      
+        await api
+          .delete(`/api/blogs/${blogToDelete.id}`)
+          .expect(204)
+      
+        const afterDeletion = await helper.blogsInDB()
+      
+        expect(afterDeletion.length).toBe(
+          helper.initialBlogs.length - 1
+        )
+
+        const contents = afterDeletion.map(b => b.title)
+        expect(contents).not.toContain(blogToDelete.content)
+      })
 })
 
 afterAll(() => {
